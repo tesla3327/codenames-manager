@@ -1,0 +1,63 @@
+body {
+  font-family: sans-serif;
+}
+
+.board-view {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  grid-gap: 10px;
+}
+
+.card {
+  width: 250px;
+  height: 150px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  background: #fdf2dd;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.1s ease-in-out;
+}
+
+.card.blue {
+  background: #4444f6;
+}
+
+.card.red {
+  background: #ff3131;
+}
+
+.card.neutral {
+  background: #d39361;
+}
+
+.card.assassin {
+  background: #444;
+}
+
+.card span {
+  padding: 15px;
+}
+
+.card:hover {
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card .edit {
+  display: none;
+  width: 100%;
+  height: 100px;
+  background: white;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.card.editing .edit {
+  display: initial;
+}
