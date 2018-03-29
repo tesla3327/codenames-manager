@@ -33,4 +33,14 @@ let make_with_words = words => {
   Array.range(0, 4) |> Array.map(_, getRow);
 };
 
-let changeCardType = (board, word, cardType) => {};
+let changeCardType = (board, word, cardType) => {
+  open Belt;
+  /* Look in the first row */
+  let firstRow =
+    switch (board[0]) {
+    | Some(row) => row
+    | None => [||]
+    };
+  let matches = Array.keep(firstRow, word_ => word_ === word);
+  ();
+};
