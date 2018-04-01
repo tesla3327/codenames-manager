@@ -4,19 +4,45 @@
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 
-function makeCard($staropt$star, $staropt$star$1, $staropt$star$2, _) {
+function makeCard($staropt$star, $staropt$star$1, _) {
   var word = $staropt$star ? $staropt$star[0] : "Default";
-  var cardType = $staropt$star$1 ? $staropt$star$1[0] : /* Neutral */2;
-  var revealed = $staropt$star$2 ? $staropt$star$2[0] : /* false */0;
+  var cardType = $staropt$star$1 ? $staropt$star$1[0] : /* Hidden */0;
   return /* record */[
-          /* cardType */cardType,
           /* word */word,
-          /* revealed */revealed
+          /* cardType */cardType
         ];
 }
 
 function make() {
-  return Belt_Array.make(5, Belt_Array.make(5, makeCard(/* None */0, /* None */0, /* None */0, /* () */0)));
+  return Belt_Array.make(5, Belt_Array.make(5, makeCard(/* None */0, /* None */0, /* () */0)));
+}
+
+function getNextCardType(cardType) {
+  switch (cardType) {
+    case 0 : 
+        return /* Red */1;
+    case 1 : 
+        return /* Blue */2;
+    case 2 : 
+        return /* Neutral */3;
+    case 3 : 
+        return /* Assassin */4;
+    case 4 : 
+        return /* Hidden */0;
+    
+  }
+}
+
+function cycleCardType(board, word) {
+  return Belt_Array.map(board, (function (row) {
+                return Belt_Array.map(row, (function (card) {
+                              if (card[/* word */0] === word) {
+                                return makeCard(/* Some */[card[/* word */0]], /* Some */[getNextCardType(card[/* cardType */1])], /* () */0);
+                              } else {
+                                return card;
+                              }
+                            }));
+              }));
 }
 
 function make_with_words(words) {
@@ -25,9 +51,9 @@ function make_with_words(words) {
     return Belt_Array.map(__x, (function (index) {
                   var match = Belt_Array.get(words, index);
                   if (match) {
-                    return makeCard(/* Some */[match[0]], /* None */0, /* None */0, /* () */0);
+                    return makeCard(/* Some */[match[0]], /* None */0, /* () */0);
                   } else {
-                    return makeCard(/* None */0, /* None */0, /* None */0, /* () */0);
+                    return makeCard(/* None */0, /* None */0, /* () */0);
                   }
                 }));
   };
@@ -35,17 +61,9 @@ function make_with_words(words) {
   return Belt_Array.map(__x, getRow);
 }
 
-function changeCardType(board, word, _) {
-  var match = Belt_Array.get(board, 0);
-  var firstRow = match ? match[0] : /* array */[];
-  Belt_Array.keep(firstRow, (function (word_) {
-          return +(word_ === word);
-        }));
-  return /* () */0;
-}
-
 exports.makeCard = makeCard;
 exports.make = make;
+exports.getNextCardType = getNextCardType;
+exports.cycleCardType = cycleCardType;
 exports.make_with_words = make_with_words;
-exports.changeCardType = changeCardType;
 /* No side effect */

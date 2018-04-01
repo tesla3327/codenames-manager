@@ -8,21 +8,20 @@ type state = {
 };
 
 type action =
-  | Click(string);
+  | CycleType(string);
 
 let component = ReasonReact.reducerComponent("BoardView");
 
 let getClasses = (card: Board.card) => {
   let baseClass = "card";
   let colorClass =
-    card.revealed ?
-      switch (card.cardType) {
-      | Red => "red"
-      | Blue => "blue"
-      | Neutral => "neutral"
-      | Assassin => "assassin"
-      } :
-      "";
+    switch (card.cardType) {
+    | Red => "red"
+    | Blue => "blue"
+    | Neutral => "neutral"
+    | Assassin => "assassin"
+    | Hidden => ""
+    };
   baseClass ++ " " ++ colorClass;
 };
 
@@ -37,9 +36,13 @@ let renderCard = (handleClick, card: Board.card) =>
 let make = (~words, _children) => {
   ...component,
   initialState: () => {board: Board.make_with_words(words), mode: View},
-  reducer: (action, _state) =>
+  reducer: (action, state) =>
     switch (action) {
-    | Click(_) => ReasonReact.NoUpdate
+    | CycleType(word) =>
+      ReasonReact.Update({
+        ...state,
+        board: Board.cycleCardType(state.board, word),
+      })
     },
   render: self =>
     <div className="board-view">
@@ -47,7 +50,7 @@ let make = (~words, _children) => {
         Belt.Array.concatMany(self.state.board)
         |> Belt.Array.map(
              _,
-             renderCard((word, _e) => self.send(Click(word))),
+             renderCard((word, _e) => self.send(CycleType(word))),
            )
         |> ReasonReact.arrayToElement
       )

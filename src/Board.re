@@ -1,24 +1,46 @@
 type cardType =
+  | Hidden
   | Red
   | Blue
   | Neutral
   | Assassin;
 
 type card = {
-  cardType,
   word: string,
-  revealed: bool,
+  cardType,
 };
 
-let makeCard = (~word="Default", ~cardType=Neutral, ~revealed=false, ()) => {
-  cardType,
-  word,
-  revealed,
-};
+let makeCard = (~word="Default", ~cardType=Hidden, ()) => {cardType, word};
 
 type t = array(array(card));
 
 let make = () => Belt.Array.make(5, Belt.Array.make(5, makeCard()));
+
+let getNextCardType = cardType =>
+  switch (cardType) {
+  | Hidden => Red
+  | Red => Blue
+  | Blue => Neutral
+  | Neutral => Assassin
+  | Assassin => Hidden
+  };
+
+let cycleCardType = (board, word) =>
+  Belt.(
+    Array.map(board, row =>
+      Array.map(row, card =>
+        if (card.word === word) {
+          makeCard(
+            ~word=card.word,
+            ~cardType=getNextCardType(card.cardType),
+            (),
+          );
+        } else {
+          card;
+        }
+      )
+    )
+  );
 
 let make_with_words = words => {
   open Belt;
@@ -31,16 +53,4 @@ let make_with_words = words => {
          }
        );
   Array.range(0, 4) |> Array.map(_, getRow);
-};
-
-let changeCardType = (board, word, cardType) => {
-  open Belt;
-  /* Look in the first row */
-  let firstRow =
-    switch (board[0]) {
-    | Some(row) => row
-    | None => [||]
-    };
-  let matches = Array.keep(firstRow, word_ => word_ === word);
-  ();
 };
