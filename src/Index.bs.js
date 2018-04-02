@@ -13,24 +13,7 @@ var words = /* array */[
   "Pass",
   "Knight",
   "Cross",
-  "Tie",
-  "Court",
-  "Cotton",
-  "Point",
-  "Card",
-  "Duck",
-  "Star",
-  "Slip",
-  "Fighter",
-  "Bridge",
-  "Band",
-  "Hood",
-  "Olive",
-  "Shop",
-  "Match",
-  "Ball",
-  "Bow",
-  "Mercury"
+  "Tie"
 ];
 
 ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, BoardView$ReactTemplate.make(words, /* array */[])), "app");

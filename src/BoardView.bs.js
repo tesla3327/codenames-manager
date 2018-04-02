@@ -7,51 +7,47 @@ var React = require("react");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Board$ReactTemplate = require("./Board.bs.js");
+var CardView$ReactTemplate = require("./CardView.bs.js");
+var EditCardView$ReactTemplate = require("./EditCardView.bs.js");
+var EmptyCardView$ReactTemplate = require("./EmptyCardView.bs.js");
 
 var component = ReasonReact.reducerComponent("BoardView");
 
-function getClasses(card) {
-  var match = card[/* cardType */1];
-  var colorClass;
-  switch (match) {
-    case 0 : 
-        colorClass = "";
-        break;
-    case 1 : 
-        colorClass = "red";
-        break;
-    case 2 : 
-        colorClass = "blue";
-        break;
-    case 3 : 
-        colorClass = "neutral";
-        break;
-    case 4 : 
-        colorClass = "assassin";
-        break;
-    
+function renderCard(cycleType, editCard, mode, card) {
+  var exit = 0;
+  if (mode && mode[0] === card[/* id */0]) {
+    return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, EditCardView$ReactTemplate.make(card, /* array */[]));
+  } else {
+    exit = 1;
   }
-  return "card " + colorClass;
-}
-
-function renderCard(handleClick, card) {
-  return React.createElement("div", {
-              key: card[/* word */0],
-              className: getClasses(card),
-              onClick: Curry._1(handleClick, card[/* word */0])
-            }, React.createElement("span", undefined, card[/* word */0]));
+  if (exit === 1) {
+    var match = +(card[/* word */1] === "");
+    if (match !== 0) {
+      return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, EmptyCardView$ReactTemplate.make(editCard, card, /* array */[]));
+    } else {
+      return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, CardView$ReactTemplate.make(cycleType, editCard, card, /* array */[]));
+    }
+  }
+  
 }
 
 function make(words, _) {
   var newrecord = component.slice();
+  newrecord[/* didMount */4] = (function (self) {
+      console.log(self[/* state */2][/* board */0]);
+      return /* NoUpdate */0;
+    });
   newrecord[/* render */9] = (function (self) {
       var __x = Belt_Array.concatMany(self[/* state */2][/* board */0]);
+      var partial_arg = self[/* state */2][/* mode */1];
       return React.createElement("div", {
                   className: "board-view"
                 }, Belt_Array.map(__x, (function (param) {
-                        return renderCard((function (word, _) {
-                                      return Curry._1(self[/* send */4], /* CycleType */[word]);
-                                    }), param);
+                        return renderCard((function (id) {
+                                      return Curry._1(self[/* send */4], /* CycleType */Block.__(1, [id]));
+                                    }), (function (id) {
+                                      return Curry._1(self[/* send */4], /* EditCard */Block.__(0, [id]));
+                                    }), partial_arg, param);
                       })));
     });
   newrecord[/* initialState */10] = (function () {
@@ -61,16 +57,22 @@ function make(words, _) {
             ];
     });
   newrecord[/* reducer */12] = (function (action, state) {
-      return /* Update */Block.__(0, [/* record */[
-                  /* board */Board$ReactTemplate.cycleCardType(state[/* board */0], action[0]),
-                  /* mode */state[/* mode */1]
-                ]]);
+      if (action.tag) {
+        return /* Update */Block.__(0, [/* record */[
+                    /* board */Board$ReactTemplate.cycleCardType(state[/* board */0], action[0]),
+                    /* mode */state[/* mode */1]
+                  ]]);
+      } else {
+        return /* Update */Block.__(0, [/* record */[
+                    /* board */state[/* board */0],
+                    /* mode : Editing */[action[0]]
+                  ]]);
+      }
     });
   return newrecord;
 }
 
 exports.component = component;
-exports.getClasses = getClasses;
 exports.renderCard = renderCard;
 exports.make = make;
 /* component Not a pure module */

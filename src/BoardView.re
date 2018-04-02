@@ -8,41 +8,41 @@ type state = {
 };
 
 type action =
+  | EditCard(string)
   | CycleType(string);
 
 let component = ReasonReact.reducerComponent("BoardView");
 
-let getClasses = (card: Board.card) => {
-  let baseClass = "card";
-  let colorClass =
-    switch (card.cardType) {
-    | Red => "red"
-    | Blue => "blue"
-    | Neutral => "neutral"
-    | Assassin => "assassin"
-    | Hidden => ""
-    };
-  baseClass ++ " " ++ colorClass;
-};
-
-let renderCard = (handleClick, card: Board.card) =>
-  <div
-    className=(getClasses(card))
-    key=card.word
-    onClick=(handleClick(card.word))>
-    <span> (ReasonReact.stringToElement(card.word)) </span>
-  </div>;
+let renderCard = (~cycleType, ~editCard, mode, card: Board.card) =>
+  switch (mode) {
+  | Editing(id) when id === card.id => <EditCardView key=card.id card />
+  | Editing(_)
+  | View =>
+    card.word === "" ?
+      <EmptyCardView handleEditCard=editCard card key=card.id /> :
+      <CardView
+        key=card.id
+        card
+        handleCycleType=cycleType
+        handleEditCard=editCard
+      />
+  };
 
 let make = (~words, _children) => {
   ...component,
   initialState: () => {board: Board.make_with_words(words), mode: View},
+  didMount: self => {
+    Js.log(self.state.board);
+    ReasonReact.NoUpdate;
+  },
   reducer: (action, state) =>
     switch (action) {
-    | CycleType(word) =>
+    | CycleType(id) =>
       ReasonReact.Update({
         ...state,
-        board: Board.cycleCardType(state.board, word),
+        board: Board.cycleCardType(state.board, id),
       })
+    | EditCard(id) => ReasonReact.Update({...state, mode: Editing(id)})
     },
   render: self =>
     <div className="board-view">
@@ -50,7 +50,11 @@ let make = (~words, _children) => {
         Belt.Array.concatMany(self.state.board)
         |> Belt.Array.map(
              _,
-             renderCard((word, _e) => self.send(CycleType(word))),
+             renderCard(
+               ~cycleType=id => self.send(CycleType(id)),
+               ~editCard=id => self.send(EditCard(id)),
+               self.state.mode,
+             ),
            )
         |> ReasonReact.arrayToElement
       )
