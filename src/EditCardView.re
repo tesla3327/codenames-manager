@@ -6,7 +6,7 @@ type action =
 
 let component = ReasonReact.reducerComponent("EditCardView");
 
-let make = (~card: Board.card, _children) => {
+let make = (~card: Board.card, ~handleUpdateCard, _children) => {
   ...component,
   initialState: () => {cardState: card},
   reducer: (action, state: state) =>
@@ -49,6 +49,9 @@ let make = (~card: Board.card, _children) => {
           (ReasonReact.stringToElement("Assassin"))
         </option>
       </select>
-      <button _type="submit"> (ReasonReact.stringToElement("Save")) </button>
+      <button
+        _type="submit" onClick=(_e => handleUpdateCard(self.state.cardState))>
+        (ReasonReact.stringToElement("Save"))
+      </button>
     </div>,
 };

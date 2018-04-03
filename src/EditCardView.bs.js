@@ -8,7 +8,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("EditCardView");
 
-function make(card, _) {
+function make(card, handleUpdateCard, _) {
   var newrecord = component.slice();
   newrecord[/* render */9] = (function (self) {
       return React.createElement("div", {
@@ -29,7 +29,10 @@ function make(card, _) {
                         }, "Neutral"), React.createElement("option", {
                           value: "assassin"
                         }, "Assassin")), React.createElement("button", {
-                      type: "submit"
+                      type: "submit",
+                      onClick: (function () {
+                          return Curry._1(handleUpdateCard, self[/* state */2][/* cardState */0]);
+                        })
                     }, "Save"));
     });
   newrecord[/* initialState */10] = (function () {

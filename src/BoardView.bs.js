@@ -13,10 +13,10 @@ var EmptyCardView$ReactTemplate = require("./EmptyCardView.bs.js");
 
 var component = ReasonReact.reducerComponent("BoardView");
 
-function renderCard(cycleType, editCard, mode, card) {
+function renderCard(cycleType, editCard, updateCard, mode, card) {
   var exit = 0;
   if (mode && mode[0] === card[/* id */0]) {
-    return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, EditCardView$ReactTemplate.make(card, /* array */[]));
+    return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, EditCardView$ReactTemplate.make(card, updateCard, /* array */[]));
   } else {
     exit = 1;
   }
@@ -44,9 +44,11 @@ function make(words, _) {
                   className: "board-view"
                 }, Belt_Array.map(__x, (function (param) {
                         return renderCard((function (id) {
-                                      return Curry._1(self[/* send */4], /* CycleType */Block.__(1, [id]));
+                                      return Curry._1(self[/* send */4], /* CycleType */Block.__(2, [id]));
                                     }), (function (id) {
-                                      return Curry._1(self[/* send */4], /* EditCard */Block.__(0, [id]));
+                                      return Curry._1(self[/* send */4], /* EditCard */Block.__(1, [id]));
+                                    }), (function (card) {
+                                      return Curry._1(self[/* send */4], /* UpdateCard */Block.__(0, [card]));
                                     }), partial_arg, param);
                       })));
     });
@@ -57,16 +59,30 @@ function make(words, _) {
             ];
     });
   newrecord[/* reducer */12] = (function (action, state) {
-      if (action.tag) {
-        return /* Update */Block.__(0, [/* record */[
-                    /* board */Board$ReactTemplate.cycleCardType(state[/* board */0], action[0]),
-                    /* mode */state[/* mode */1]
-                  ]]);
-      } else {
-        return /* Update */Block.__(0, [/* record */[
-                    /* board */state[/* board */0],
-                    /* mode : Editing */[action[0]]
-                  ]]);
+      switch (action.tag | 0) {
+        case 0 : 
+            var card = action[0];
+            return /* Update */Block.__(0, [/* record */[
+                        /* board */Board$ReactTemplate.updateCards((function (card_) {
+                                if (card_[/* id */0] === card[/* id */0]) {
+                                  return Board$ReactTemplate.makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */2]], card[/* id */0]);
+                                } else {
+                                  return card_;
+                                }
+                              }), state[/* board */0]),
+                        /* mode : View */0
+                      ]]);
+        case 1 : 
+            return /* Update */Block.__(0, [/* record */[
+                        /* board */state[/* board */0],
+                        /* mode : Editing */[action[0]]
+                      ]]);
+        case 2 : 
+            return /* Update */Block.__(0, [/* record */[
+                        /* board */Board$ReactTemplate.cycleCardType(state[/* board */0], action[0]),
+                        /* mode */state[/* mode */1]
+                      ]]);
+        
       }
     });
   return newrecord;
