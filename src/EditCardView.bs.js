@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var Board$ReactTemplate = require("./Board.bs.js");
 
 var component = ReasonReact.reducerComponent("EditCardView");
 
@@ -12,28 +13,35 @@ function make(card, handleUpdateCard, _) {
   var newrecord = component.slice();
   newrecord[/* render */9] = (function (self) {
       return React.createElement("div", {
-                  className: "card edit"
-                }, React.createElement("input", {
-                      placeholder: "Enter word",
-                      value: self[/* state */2][/* cardState */0][/* word */1],
-                      onChange: (function (e) {
-                          var target = e.target;
-                          return Curry._1(self[/* send */4], /* ChangeWord */Block.__(0, [target.value]));
-                        })
-                    }), React.createElement("select", undefined, React.createElement("option", {
-                          value: "red"
-                        }, "Red"), React.createElement("option", {
-                          value: "blue"
-                        }, "Blue"), React.createElement("option", {
-                          value: "neutral"
-                        }, "Neutral"), React.createElement("option", {
-                          value: "assassin"
-                        }, "Assassin")), React.createElement("button", {
-                      type: "submit",
-                      onClick: (function () {
-                          return Curry._1(handleUpdateCard, self[/* state */2][/* cardState */0]);
-                        })
-                    }, "Save"));
+                  className: "edit " + Board$ReactTemplate.getClasses(self[/* state */2][/* cardState */0])
+                }, React.createElement("form", undefined, React.createElement("input", {
+                          placeholder: "Enter word",
+                          value: self[/* state */2][/* cardState */0][/* word */1],
+                          onChange: (function (e) {
+                              var target = e.target;
+                              return Curry._1(self[/* send */4], /* ChangeWord */Block.__(0, [target.value]));
+                            })
+                        }), React.createElement("select", {
+                          value: Board$ReactTemplate.cardTypeToString(self[/* state */2][/* cardState */0][/* cardType */3]),
+                          onChange: (function (e) {
+                              var target = e.target;
+                              return Curry._1(self[/* send */4], /* ChangeType */Block.__(1, [Board$ReactTemplate.stringToCardType(target.value)]));
+                            })
+                        }, React.createElement("option", {
+                              value: "neutral"
+                            }, "Neutral"), React.createElement("option", {
+                              value: "red"
+                            }, "Red"), React.createElement("option", {
+                              value: "blue"
+                            }, "Blue"), React.createElement("option", {
+                              value: "assassin"
+                            }, "Assassin")), React.createElement("button", {
+                          className: "save",
+                          type: "submit",
+                          onClick: (function () {
+                              return Curry._1(handleUpdateCard, self[/* state */2][/* cardState */0]);
+                            })
+                        }, "Save")));
     });
   newrecord[/* initialState */10] = (function () {
       return /* record */[/* cardState */card];
@@ -44,6 +52,7 @@ function make(card, handleUpdateCard, _) {
         return /* Update */Block.__(0, [/* record */[/* cardState : record */[
                       /* id */init[/* id */0],
                       /* word */init[/* word */1],
+                      /* revealed */init[/* revealed */2],
                       /* cardType */action[0]
                     ]]]);
       } else {
@@ -51,7 +60,8 @@ function make(card, handleUpdateCard, _) {
         return /* Update */Block.__(0, [/* record */[/* cardState : record */[
                       /* id */init$1[/* id */0],
                       /* word */action[0],
-                      /* cardType */init$1[/* cardType */2]
+                      /* revealed */init$1[/* revealed */2],
+                      /* cardType */init$1[/* cardType */3]
                     ]]]);
       }
     });

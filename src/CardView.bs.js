@@ -4,41 +4,18 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var Board$ReactTemplate = require("./Board.bs.js");
 
 var component = ReasonReact.statelessComponent("CardView");
 
-function getClasses(card) {
-  var match = card[/* cardType */2];
-  var colorClass;
-  switch (match) {
-    case 0 : 
-        colorClass = "";
-        break;
-    case 1 : 
-        colorClass = "red";
-        break;
-    case 2 : 
-        colorClass = "blue";
-        break;
-    case 3 : 
-        colorClass = "neutral";
-        break;
-    case 4 : 
-        colorClass = "assassin";
-        break;
-    
-  }
-  return "card " + colorClass;
-}
-
-function make(handleCycleType, handleEditCard, card, _) {
+function make(handleToggleRevealed, handleEditCard, card, _) {
   var newrecord = component.slice();
   newrecord[/* render */9] = (function () {
       return React.createElement("div", {
-                  className: getClasses(card),
+                  className: Board$ReactTemplate.getClasses(card),
                   onClick: (function (e) {
                       e.preventDefault();
-                      return Curry._1(handleCycleType, card[/* id */0]);
+                      return Curry._1(handleToggleRevealed, card[/* id */0]);
                     })
                 }, React.createElement("span", undefined, card[/* word */1]), React.createElement("button", {
                       className: "edit",
@@ -52,6 +29,5 @@ function make(handleCycleType, handleEditCard, card, _) {
 }
 
 exports.component = component;
-exports.getClasses = getClasses;
 exports.make = make;
 /* component Not a pure module */

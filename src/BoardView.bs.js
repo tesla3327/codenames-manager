@@ -13,7 +13,7 @@ var EmptyCardView$ReactTemplate = require("./EmptyCardView.bs.js");
 
 var component = ReasonReact.reducerComponent("BoardView");
 
-function renderCard(cycleType, editCard, updateCard, mode, card) {
+function renderCard(toggleRevealed, editCard, updateCard, mode, card) {
   var exit = 0;
   if (mode && mode[0] === card[/* id */0]) {
     return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, EditCardView$ReactTemplate.make(card, updateCard, /* array */[]));
@@ -25,7 +25,7 @@ function renderCard(cycleType, editCard, updateCard, mode, card) {
     if (match !== 0) {
       return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, EmptyCardView$ReactTemplate.make(editCard, card, /* array */[]));
     } else {
-      return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, CardView$ReactTemplate.make(cycleType, editCard, card, /* array */[]));
+      return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, CardView$ReactTemplate.make(toggleRevealed, editCard, card, /* array */[]));
     }
   }
   
@@ -44,7 +44,7 @@ function make(words, _) {
                   className: "board-view"
                 }, Belt_Array.map(__x, (function (param) {
                         return renderCard((function (id) {
-                                      return Curry._1(self[/* send */4], /* CycleType */Block.__(2, [id]));
+                                      return Curry._1(self[/* send */4], /* ToggleRevealed */Block.__(2, [id]));
                                     }), (function (id) {
                                       return Curry._1(self[/* send */4], /* EditCard */Block.__(1, [id]));
                                     }), (function (card) {
@@ -65,7 +65,7 @@ function make(words, _) {
             return /* Update */Block.__(0, [/* record */[
                         /* board */Board$ReactTemplate.updateCards((function (card_) {
                                 if (card_[/* id */0] === card[/* id */0]) {
-                                  return Board$ReactTemplate.makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */2]], card[/* id */0]);
+                                  return Board$ReactTemplate.makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */3]], /* None */0, card[/* id */0]);
                                 } else {
                                   return card_;
                                 }
@@ -79,7 +79,7 @@ function make(words, _) {
                       ]]);
         case 2 : 
             return /* Update */Block.__(0, [/* record */[
-                        /* board */Board$ReactTemplate.cycleCardType(state[/* board */0], action[0]),
+                        /* board */Board$ReactTemplate.toggleRevealed(state[/* board */0], action[0]),
                         /* mode */state[/* mode */1]
                       ]]);
         

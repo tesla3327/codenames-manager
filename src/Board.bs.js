@@ -5,30 +5,16 @@ var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 
-function makeCard($staropt$star, $staropt$star$1, id) {
+function makeCard($staropt$star, $staropt$star$1, $staropt$star$2, id) {
   var word = $staropt$star ? $staropt$star[0] : "";
-  var cardType = $staropt$star$1 ? $staropt$star$1[0] : /* Hidden */0;
+  var cardType = $staropt$star$1 ? $staropt$star$1[0] : /* Neutral */2;
+  var revealed = $staropt$star$2 ? $staropt$star$2[0] : /* false */0;
   return /* record */[
           /* id */id,
           /* word */word,
+          /* revealed */revealed,
           /* cardType */cardType
         ];
-}
-
-function getNextCardType(cardType) {
-  switch (cardType) {
-    case 0 : 
-        return /* Red */1;
-    case 1 : 
-        return /* Blue */2;
-    case 2 : 
-        return /* Neutral */3;
-    case 3 : 
-        return /* Assassin */4;
-    case 4 : 
-        return /* Hidden */0;
-    
-  }
 }
 
 function updateCards(func, board) {
@@ -37,14 +23,67 @@ function updateCards(func, board) {
               }));
 }
 
-function cycleCardType(board, id) {
+function toggleRevealed(board, id) {
   return updateCards((function (card) {
                 if (card[/* id */0] === id) {
-                  return makeCard(/* Some */[card[/* word */1]], /* Some */[getNextCardType(card[/* cardType */2])], card[/* id */0]);
+                  return makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */3]], /* Some */[1 - card[/* revealed */2]], card[/* id */0]);
                 } else {
                   return card;
                 }
               }), board);
+}
+
+function getClasses(card) {
+  var match = card[/* cardType */3];
+  var colorClass;
+  switch (match) {
+    case 0 : 
+        colorClass = "red";
+        break;
+    case 1 : 
+        colorClass = "blue";
+        break;
+    case 2 : 
+        colorClass = "neutral";
+        break;
+    case 3 : 
+        colorClass = "assassin";
+        break;
+    
+  }
+  var match$1 = card[/* revealed */2];
+  return "card " + (colorClass + (" " + (
+              match$1 !== 0 ? "" : "hidden"
+            )));
+}
+
+function stringToCardType(str) {
+  switch (str) {
+    case "assassin" : 
+        return /* Assassin */3;
+    case "blue" : 
+        return /* Blue */1;
+    case "neutral" : 
+        return /* Neutral */2;
+    case "red" : 
+        return /* Red */0;
+    default:
+      return /* Neutral */2;
+  }
+}
+
+function cardTypeToString(cardType) {
+  switch (cardType) {
+    case 0 : 
+        return "red";
+    case 1 : 
+        return "blue";
+    case 2 : 
+        return "neutral";
+    case 3 : 
+        return "assassin";
+    
+  }
 }
 
 function getId(row, col) {
@@ -57,18 +96,20 @@ function make_with_words(words) {
                               var index = Caml_int32.imul(row, 5) + col | 0;
                               var id = getId(row, col);
                               if (words.length > index) {
-                                return makeCard(/* Some */[Caml_array.caml_array_get(words, index)], /* None */0, id);
+                                return makeCard(/* Some */[Caml_array.caml_array_get(words, index)], /* None */0, /* None */0, id);
                               } else {
-                                return makeCard(/* None */0, /* None */0, id);
+                                return makeCard(/* None */0, /* None */0, /* None */0, id);
                               }
                             }));
               }));
 }
 
 exports.makeCard = makeCard;
-exports.getNextCardType = getNextCardType;
 exports.updateCards = updateCards;
-exports.cycleCardType = cycleCardType;
+exports.toggleRevealed = toggleRevealed;
+exports.getClasses = getClasses;
+exports.stringToCardType = stringToCardType;
+exports.cardTypeToString = cardTypeToString;
 exports.getId = getId;
 exports.make_with_words = make_with_words;
 /* No side effect */

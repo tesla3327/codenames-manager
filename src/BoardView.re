@@ -10,11 +10,12 @@ type state = {
 type action =
   | UpdateCard(Board.card)
   | EditCard(string)
-  | CycleType(string);
+  | ToggleRevealed(string);
 
 let component = ReasonReact.reducerComponent("BoardView");
 
-let renderCard = (~cycleType, ~editCard, ~updateCard, mode, card: Board.card) =>
+let renderCard =
+    (~toggleRevealed, ~editCard, ~updateCard, mode, card: Board.card) =>
   switch (mode) {
   | Editing(id) when id === card.id =>
     <EditCardView handleUpdateCard=updateCard key=card.id card />
@@ -25,7 +26,7 @@ let renderCard = (~cycleType, ~editCard, ~updateCard, mode, card: Board.card) =>
       <CardView
         key=card.id
         card
-        handleCycleType=cycleType
+        handleToggleRevealed=toggleRevealed
         handleEditCard=editCard
       />
   };
@@ -39,10 +40,10 @@ let make = (~words, _children) => {
   },
   reducer: (action, state) =>
     switch (action) {
-    | CycleType(id) =>
+    | ToggleRevealed(id) =>
       ReasonReact.Update({
         ...state,
-        board: Board.cycleCardType(state.board, id),
+        board: Board.toggleRevealed(state.board, id),
       })
     | EditCard(id) => ReasonReact.Update({...state, mode: Editing(id)})
     | UpdateCard(card) =>
@@ -71,7 +72,7 @@ let make = (~words, _children) => {
         |> Belt.Array.map(
              _,
              renderCard(
-               ~cycleType=id => self.send(CycleType(id)),
+               ~toggleRevealed=id => self.send(ToggleRevealed(id)),
                ~editCard=id => self.send(EditCard(id)),
                ~updateCard=card => self.send(UpdateCard(card)),
                self.state.mode,

@@ -1,5 +1,4 @@
 type cardType =
-  | Hidden
   | Red
   | Blue
   | Neutral
@@ -8,33 +7,39 @@ type cardType =
 type card = {
   id: string,
   word: string,
+  revealed: bool,
   cardType,
 };
 
-let makeCard = (~word="", ~cardType=Hidden, id) => {id, cardType, word};
+let makeCard = (~word="", ~cardType=Neutral, ~revealed=false, id) => {
+  id,
+  cardType,
+  word,
+  revealed,
+};
 
 type t = array(array(card));
 
 /* let make = () => Belt.Array.make(5, Belt.Array.make(5, makeCard()); */
-let getNextCardType = cardType =>
-  switch (cardType) {
-  | Hidden => Red
-  | Red => Blue
-  | Blue => Neutral
-  | Neutral => Assassin
-  | Assassin => Hidden
-  };
-
+/* let getNextCardType = cardType =>
+   switch (cardType) {
+   | Hidden => Red
+   | Red => Blue
+   | Blue => Neutral
+   | Neutral => Assassin
+   | Assassin => Hidden
+   }; */
 let updateCards = (func, board) =>
   Belt.(Array.map(board, row => Array.map(row, func)));
 
-let cycleCardType = (board, id) =>
+let toggleRevealed = (board, id) =>
   updateCards(
     card =>
       if (card.id === id) {
         makeCard(
           ~word=card.word,
-          ~cardType=getNextCardType(card.cardType),
+          ~cardType=card.cardType,
+          ~revealed=! card.revealed,
           card.id,
         );
       } else {
@@ -42,6 +47,35 @@ let cycleCardType = (board, id) =>
       },
     board,
   );
+
+let getClasses = card => {
+  let baseClass = "card";
+  let colorClass =
+    switch (card.cardType) {
+    | Red => "red"
+    | Blue => "blue"
+    | Neutral => "neutral"
+    | Assassin => "assassin"
+    };
+  baseClass ++ " " ++ colorClass ++ " " ++ (card.revealed ? "" : "hidden");
+};
+
+let stringToCardType = str =>
+  switch (str) {
+  | "red" => Red
+  | "blue" => Blue
+  | "assassin" => Assassin
+  | "neutral"
+  | _ => Neutral
+  };
+
+let cardTypeToString = cardType =>
+  switch (cardType) {
+  | Red => "red"
+  | Blue => "blue"
+  | Assassin => "assassin"
+  | Neutral => "neutral"
+  };
 
 let getId = (row, col) => string_of_int(row) ++ string_of_int(col);
 
