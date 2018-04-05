@@ -65,7 +65,7 @@ function make(words, _) {
             return /* Update */Block.__(0, [/* record */[
                         /* board */Board$ReactTemplate.updateCards((function (card_) {
                                 if (card_[/* id */0] === card[/* id */0]) {
-                                  return Board$ReactTemplate.makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */3]], /* None */0, card[/* id */0]);
+                                  return Board$ReactTemplate.makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */3]], /* Some */[card[/* revealed */2]], card[/* id */0]);
                                 } else {
                                   return card_;
                                 }

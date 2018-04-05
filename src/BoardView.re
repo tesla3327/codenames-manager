@@ -56,6 +56,7 @@ let make = (~words, _children) => {
                 Board.makeCard(
                   ~word=card.word,
                   ~cardType=card.cardType,
+                  ~revealed=card.revealed,
                   card.id,
                 );
               } else {
