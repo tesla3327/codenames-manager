@@ -1,3 +1,6 @@
+/* Include sockets */
+[%bs.raw "window.io = require(\"socket.io-client\")"];
+
 type mode =
   | View
   | Editing(string);
@@ -13,6 +16,11 @@ type action =
   | ToggleRevealed(string);
 
 let component = ReasonReact.reducerComponent("BoardView");
+
+/* Socket test */
+module SocketClient = SocketIO.Client.Make(SocketCommon);
+
+let socket = SocketClient.create();
 
 let renderCard =
     (~toggleRevealed, ~editCard, ~updateCard, mode, card: Board.card) =>
@@ -41,10 +49,11 @@ let make = (~words, _children) => {
   reducer: (action, state) =>
     switch (action) {
     | ToggleRevealed(id) =>
+      SocketClient.emit(socket, SocketCommon.Message, "Clicked " ++ id);
       ReasonReact.Update({
         ...state,
         board: Board.toggleRevealed(state.board, id),
-      })
+      });
     | EditCard(id) => ReasonReact.Update({...state, mode: Editing(id)})
     | UpdateCard(card) =>
       ReasonReact.Update({

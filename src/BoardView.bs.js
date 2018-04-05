@@ -8,10 +8,18 @@ var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Board$ReactTemplate = require("./Board.bs.js");
 var CardView$ReactTemplate = require("./CardView.bs.js");
+var SocketIO$ReactTemplate = require("./SocketIO.bs.js");
 var EditCardView$ReactTemplate = require("./EditCardView.bs.js");
+var SocketCommon$ReactTemplate = require("./SocketCommon.bs.js");
 var EmptyCardView$ReactTemplate = require("./EmptyCardView.bs.js");
 
+((window.io = require("socket.io-client")));
+
 var component = ReasonReact.reducerComponent("BoardView");
+
+var SocketClient = SocketIO$ReactTemplate.Client[/* Make */0](/* SocketCommon-ReactTemplate */[SocketCommon$ReactTemplate.stringify]);
+
+var socket = new io();
 
 function renderCard(toggleRevealed, editCard, updateCard, mode, card) {
   var exit = 0;
@@ -78,8 +86,10 @@ function make(words, _) {
                         /* mode : Editing */[action[0]]
                       ]]);
         case 2 : 
+            var id = action[0];
+            Curry._3(SocketClient[/* emit */0], socket, /* Message */0, "Clicked " + id);
             return /* Update */Block.__(0, [/* record */[
-                        /* board */Board$ReactTemplate.toggleRevealed(state[/* board */0], action[0]),
+                        /* board */Board$ReactTemplate.toggleRevealed(state[/* board */0], id),
                         /* mode */state[/* mode */1]
                       ]]);
         
@@ -89,6 +99,8 @@ function make(words, _) {
 }
 
 exports.component = component;
+exports.SocketClient = SocketClient;
+exports.socket = socket;
 exports.renderCard = renderCard;
 exports.make = make;
-/* component Not a pure module */
+/*  Not a pure module */

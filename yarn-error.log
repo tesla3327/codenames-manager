@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/mthiessen/.nvm/versions/node/v9.2.0/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js clean
+  /Users/mthiessen/.nvm/versions/node/v9.2.0/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js add bs-socket
 
 PATH: 
   /Users/mthiessen/.nvm/versions/node/v9.2.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/vidyard/DevTools/scripts/vault
@@ -5028,16 +5028,11 @@ Lockfile:
       yeoman-environment "^2.0.5"
 
 Trace: 
-  Error: Command failed.
-  Exit code: 2
-  Command: sh
-  Arguments: -c bsb -clean-world
-  Directory: /Users/mthiessen/Developer/codenames
-  Output:
-  
-      at ProcessTermError.MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
-      at new ProcessTermError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:226:113)
-      at ChildProcess.<anonymous> (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:30281:17)
-      at ChildProcess.emit (events.js:159:13)
-      at maybeClose (internal/child_process.js:943:16)
-      at Process.ChildProcess._handle.onexit (internal/child_process.js:220:5)
+  Error: Couldn't find package "bs-socket" on the "npm" registry.
+      at new MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
+      at NpmResolver.<anonymous> (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:51625:15)
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:98:30)
+      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:109:13
+      at <anonymous>
+      at process._tickCallback (internal/process/next_tick.js:188:7)
