@@ -6,7 +6,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Express = require("bs-express/src/Express.js");
 var SocketIo = require("socket.io");
 var SocketIO$ReactTemplate = require("./SocketIO.bs.js");
-var SocketCommon$ReactTemplate = require("./SocketCommon.bs.js");
+var CodenamesSocket$ReactTemplate = require("./CodenamesSocket.bs.js");
 
 var Http$1 = /* module */[];
 
@@ -27,15 +27,47 @@ var publicDir = dirname !== undefined ? dirname + "/../build" : "./build";
 
 Curry._2(Express.App[/* use */0], app, Express.Static[/* asMiddleware */4](Express.Static[/* make */3](publicDir, Express.Static[/* defaultOptions */0](/* () */0))));
 
-var SocketServer = SocketIO$ReactTemplate.Server[/* Make */0](/* SocketCommon-ReactTemplate */[SocketCommon$ReactTemplate.stringify]);
+var SocketServer = SocketIO$ReactTemplate.Server[/* Make */0](CodenamesSocket$ReactTemplate.Common);
 
 var io = SocketIo(http);
 
+var words = /* array */[
+  "Date",
+  "France",
+  "Net",
+  "Diamond",
+  "Pass",
+  "Knight",
+  "Cross",
+  "Tie",
+  "Court",
+  "Cotton",
+  "Point",
+  "Card",
+  "Duck",
+  "Star",
+  "Slip",
+  "Fighter",
+  "Bridge",
+  "Band",
+  "Hood",
+  "Olive",
+  "Shop",
+  "Match",
+  "Ball",
+  "Bow",
+  "Mercury"
+];
+
 Curry._2(SocketServer[/* onConnect */2], io, (function (socket) {
-        console.log("New connection");
-        return Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* Message */0, (function (obj) {
-                      console.log(obj);
-                      return /* () */0;
+        Curry._3(SocketServer[/* Socket */1][/* emit */1], socket, /* UpdateBoard */2, words);
+        Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* UpdateCard */0, (function (data) {
+                console.log("Updating card: " + data);
+                return Curry._3(SocketServer[/* Socket */1][/* broadcast */2], socket, /* UpdateCard */0, data);
+              }));
+        return Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* ToggleRevealed */1, (function (id) {
+                      console.log("Toggled: " + id);
+                      return Curry._3(SocketServer[/* Socket */1][/* broadcast */2], socket, /* ToggleRevealed */1, id);
                     }));
       }));
 
@@ -58,5 +90,6 @@ exports.dirname = dirname$1;
 exports.publicDir = publicDir;
 exports.SocketServer = SocketServer;
 exports.io = io;
+exports.words = words;
 exports.onListen = onListen;
 /* app Not a pure module */

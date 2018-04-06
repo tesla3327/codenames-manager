@@ -3,20 +3,8 @@
 
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var BoardView$ReactTemplate = require("./BoardView.bs.js");
+var App$ReactTemplate = require("./App.bs.js");
 
-var words = /* array */[
-  "Date",
-  "France",
-  "Net",
-  "Diamond",
-  "Pass",
-  "Knight",
-  "Cross",
-  "Tie"
-];
+ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, App$ReactTemplate.make(/* array */[], /* array */[])), "app");
 
-ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, BoardView$ReactTemplate.make(words, /* array */[])), "app");
-
-exports.words = words;
 /*  Not a pure module */

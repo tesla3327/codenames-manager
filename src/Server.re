@@ -27,16 +27,59 @@ App.use(app) @@
 (Static.make(publicDir, Static.defaultOptions()) |> Static.asMiddleware);
 
 /* Setup Sockets */
-module SocketServer = SocketIO.Server.Make(SocketCommon);
+module SocketServer = SocketIO.Server.Make(CodenamesSocket.Common);
 
 let io = SocketServer.createWithHttp(http);
+
+let words = [|
+  "Date",
+  "France",
+  "Net",
+  "Diamond",
+  "Pass",
+  "Knight",
+  "Cross",
+  "Tie",
+  "Court",
+  "Cotton",
+  "Point",
+  "Card",
+  "Duck",
+  "Star",
+  "Slip",
+  "Fighter",
+  "Bridge",
+  "Band",
+  "Hood",
+  "Olive",
+  "Shop",
+  "Match",
+  "Ball",
+  "Bow",
+  "Mercury",
+|];
 
 SocketServer.onConnect(
   io,
   socket => {
     open SocketServer;
-    Js.log("New connection");
-    Socket.on(socket, SocketCommon.Message, obj => Js.log(obj));
+    Socket.emit(socket, CodenamesSocket.Common.UpdateBoard, words);
+    Socket.on(
+      socket,
+      CodenamesSocket.Common.UpdateCard,
+      data => {
+        Js.log("Updating card: " ++ data);
+        Socket.broadcast(socket, CodenamesSocket.Common.UpdateCard, data);
+      },
+    );
+    Socket.on(
+      socket,
+      CodenamesSocket.Common.ToggleRevealed,
+      id => {
+        Js.log("Toggled: " ++ id);
+        Socket.broadcast(socket, CodenamesSocket.Common.ToggleRevealed, id);
+      },
+    );
   },
 );
 
