@@ -20,15 +20,6 @@ let makeCard = (~word="", ~cardType=Neutral, ~revealed=false, id) => {
 
 type t = array(array(card));
 
-/* let make = () => Belt.Array.make(5, Belt.Array.make(5, makeCard()); */
-/* let getNextCardType = cardType =>
-   switch (cardType) {
-   | Hidden => Red
-   | Red => Blue
-   | Blue => Neutral
-   | Neutral => Assassin
-   | Assassin => Hidden
-   }; */
 let updateCards = (func, board) =>
   Belt.(Array.map(board, row => Array.map(row, func)));
 
@@ -44,6 +35,22 @@ let toggleRevealed = (board, id) =>
         );
       } else {
         card;
+      },
+    board,
+  );
+
+let updateCard = (board, card) =>
+  updateCards(
+    (card_: card) =>
+      if (card_.id === card.id) {
+        makeCard(
+          ~word=card.word,
+          ~cardType=card.cardType,
+          ~revealed=card.revealed,
+          card.id,
+        );
+      } else {
+        card_;
       },
     board,
   );

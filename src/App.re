@@ -11,21 +11,18 @@ type state = {
 };
 
 type action =
-  | UpdateBoard(array(string))
+  | UpdateBoard(Board.t)
   | UpdateCard(Board.card)
   | EditCard(string)
   | ToggleRevealed(string);
 
 let component = ReasonReact.reducerComponent("App");
 
-let trySendAction = (type a, socket, action, data: a) => {
-  %bs.raw
-  {| console.log(action, data) |};
+let trySendAction = (type a, socket, action, data: a) =>
   switch (socket) {
   | Some(io) => SocketClient.emit(io, action, data)
   | None => ()
   };
-};
 
 let make = (~words, _children) => {
   ...component,
@@ -39,19 +36,12 @@ let make = (~words, _children) => {
     SocketClient.on(socket, CodenamesSocket.Common.UpdateBoard, obj =>
       self.send(UpdateBoard(obj))
     );
-    SocketClient.on(socket, CodenamesSocket.Common.ToggleRevealed, id =>
-      self.send(ToggleRevealed(id))
-    );
-    SocketClient.on(socket, CodenamesSocket.Common.UpdateCard, card =>
-      self.send(UpdateCard(card))
-    );
     self.state.socket := Some(socket);
     ReasonReact.NoUpdate;
   },
   reducer: (action, state) =>
     switch (action) {
-    | UpdateBoard(words) =>
-      ReasonReact.Update({...state, board: Board.make_with_words(words)})
+    | UpdateBoard(board) => ReasonReact.Update({...state, board})
     | ToggleRevealed(id) =>
       ReasonReact.Update({
         ...state,
@@ -62,21 +52,7 @@ let make = (~words, _children) => {
       ReasonReact.Update({
         ...state,
         mode: View,
-        board:
-          Board.updateCards(
-            (card_: Board.card) =>
-              if (card_.id === card.id) {
-                Board.makeCard(
-                  ~word=card.word,
-                  ~cardType=card.cardType,
-                  ~revealed=card.revealed,
-                  card.id,
-                );
-              } else {
-                card_;
-              },
-            state.board,
-          ),
+        board: Board.updateCard(state.board, card),
       })
     },
   render: self =>

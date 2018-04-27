@@ -16,7 +16,6 @@ var SocketClient = SocketIO$ReactTemplate.Client[/* Make */0](CodenamesSocket$Re
 var component = ReasonReact.reducerComponent("App");
 
 function trySendAction(socket, action, data) {
-  (( console.log(action, data) ));
   if (socket) {
     return Curry._3(SocketClient[/* emit */0], socket[0], action, data);
   } else {
@@ -30,12 +29,6 @@ function make(words, _) {
       var socket = new io();
       Curry._3(SocketClient[/* on */1], socket, /* UpdateBoard */2, (function (obj) {
               return Curry._1(self[/* send */4], /* UpdateBoard */Block.__(0, [obj]));
-            }));
-      Curry._3(SocketClient[/* on */1], socket, /* ToggleRevealed */1, (function (id) {
-              return Curry._1(self[/* send */4], /* ToggleRevealed */Block.__(3, [id]));
-            }));
-      Curry._3(SocketClient[/* on */1], socket, /* UpdateCard */0, (function (card) {
-              return Curry._1(self[/* send */4], /* UpdateCard */Block.__(1, [card]));
             }));
       self[/* state */2][/* socket */2][0] = /* Some */[socket];
       return /* NoUpdate */0;
@@ -62,20 +55,13 @@ function make(words, _) {
       switch (action.tag | 0) {
         case 0 : 
             return /* Update */Block.__(0, [/* record */[
-                        /* board */Board$ReactTemplate.make_with_words(action[0]),
+                        /* board */action[0],
                         /* mode */state[/* mode */1],
                         /* socket */state[/* socket */2]
                       ]]);
         case 1 : 
-            var card = action[0];
             return /* Update */Block.__(0, [/* record */[
-                        /* board */Board$ReactTemplate.updateCards((function (card_) {
-                                if (card_[/* id */0] === card[/* id */0]) {
-                                  return Board$ReactTemplate.makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */3]], /* Some */[card[/* revealed */2]], card[/* id */0]);
-                                } else {
-                                  return card_;
-                                }
-                              }), state[/* board */0]),
+                        /* board */Board$ReactTemplate.updateCard(state[/* board */0], action[0]),
                         /* mode : View */0,
                         /* socket */state[/* socket */2]
                       ]]);

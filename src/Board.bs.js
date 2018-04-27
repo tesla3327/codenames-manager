@@ -33,6 +33,16 @@ function toggleRevealed(board, id) {
               }), board);
 }
 
+function updateCard(board, card) {
+  return updateCards((function (card_) {
+                if (card_[/* id */0] === card[/* id */0]) {
+                  return makeCard(/* Some */[card[/* word */1]], /* Some */[card[/* cardType */3]], /* Some */[card[/* revealed */2]], card[/* id */0]);
+                } else {
+                  return card_;
+                }
+              }), board);
+}
+
 function getClasses(card) {
   var match = card[/* cardType */3];
   var colorClass;
@@ -107,6 +117,7 @@ function make_with_words(words) {
 exports.makeCard = makeCard;
 exports.updateCards = updateCards;
 exports.toggleRevealed = toggleRevealed;
+exports.updateCard = updateCard;
 exports.getClasses = getClasses;
 exports.stringToCardType = stringToCardType;
 exports.cardTypeToString = cardTypeToString;

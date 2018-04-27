@@ -5,6 +5,7 @@ var Http = require("http");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Express = require("bs-express/src/Express.js");
 var SocketIo = require("socket.io");
+var Board$ReactTemplate = require("./Board.bs.js");
 var SocketIO$ReactTemplate = require("./SocketIO.bs.js");
 var CodenamesSocket$ReactTemplate = require("./CodenamesSocket.bs.js");
 
@@ -59,8 +60,16 @@ var words = /* array */[
   "Mercury"
 ];
 
+function make(board_) {
+  return /* record */[/* board */board_];
+}
+
+var State = /* module */[/* make */make];
+
+var state = /* record */[/* board */Board$ReactTemplate.make_with_words(words)];
+
 Curry._2(SocketServer[/* onConnect */2], io, (function (socket) {
-        Curry._3(SocketServer[/* Socket */1][/* emit */1], socket, /* UpdateBoard */2, words);
+        Curry._3(SocketServer[/* Socket */1][/* emit */1], socket, /* UpdateBoard */2, state[/* board */0]);
         Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* UpdateCard */0, (function (data) {
                 console.log("Updating card: " + data);
                 return Curry._3(SocketServer[/* Socket */1][/* broadcast */2], socket, /* UpdateCard */0, data);
@@ -91,5 +100,7 @@ exports.publicDir = publicDir;
 exports.SocketServer = SocketServer;
 exports.io = io;
 exports.words = words;
+exports.State = State;
+exports.state = state;
 exports.onListen = onListen;
 /* app Not a pure module */

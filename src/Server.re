@@ -1,5 +1,7 @@
 open Express;
 
+open Belt;
+
 module Http = {
   type http;
   [@bs.module "http"] external make : App.t => http = "Server";
@@ -59,11 +61,18 @@ let words = [|
   "Mercury",
 |];
 
+module State = {
+  type t = {board: Board.t};
+  let make = (board_: Board.t) => {board: board_};
+};
+
+let state = words |> Board.make_with_words |> State.make;
+
 SocketServer.onConnect(
   io,
   socket => {
     open SocketServer;
-    Socket.emit(socket, CodenamesSocket.Common.UpdateBoard, words);
+    Socket.emit(socket, CodenamesSocket.Common.UpdateBoard, state.board);
     Socket.on(
       socket,
       CodenamesSocket.Common.UpdateCard,
