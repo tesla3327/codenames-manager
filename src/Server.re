@@ -1,5 +1,7 @@
 open Express;
 
+open CodenamesSocket;
+
 open Belt;
 
 module Http = {
@@ -29,7 +31,7 @@ App.use(app) @@
 (Static.make(publicDir, Static.defaultOptions()) |> Static.asMiddleware);
 
 /* Setup Sockets */
-module SocketServer = SocketIO.Server.Make(CodenamesSocket.Common);
+module SocketServer = SocketIO.Server.Make(CodenamesSocket);
 
 let io = SocketServer.createWithHttp(http);
 
@@ -66,29 +68,28 @@ module State = {
   let make = (board_: Board.t) => {board: board_};
 };
 
-let state = words |> Board.make_with_words |> State.make;
+let state = ref(words |> Board.make_with_words |> State.make);
+
+let reduce =
+    (type a, state: State.t, action: CodenamesSocket.t(a), data: a)
+    : State.t =>
+  switch (action) {
+  | UpdateCard => {board: Board.updateCard(state.board, data)}
+  | ToggleRevealed => {board: Board.toggleRevealed(state.board, data)}
+  | _ => state
+  };
 
 SocketServer.onConnect(
   io,
   socket => {
     open SocketServer;
-    Socket.emit(socket, CodenamesSocket.Common.UpdateBoard, state.board);
-    Socket.on(
-      socket,
-      CodenamesSocket.Common.UpdateCard,
-      data => {
-        Js.log("Updating card: " ++ data);
-        Socket.broadcast(socket, CodenamesSocket.Common.UpdateCard, data);
-      },
-    );
-    Socket.on(
-      socket,
-      CodenamesSocket.Common.ToggleRevealed,
-      id => {
-        Js.log("Toggled: " ++ id);
-        Socket.broadcast(socket, CodenamesSocket.Common.ToggleRevealed, id);
-      },
-    );
+    Socket.emit(socket, UpdateBoard, state^.board);
+    let update = (action, data) => {
+      state := reduce(state^, action, data);
+      SocketServer.emit(io, UpdateBoard, state^.board);
+    };
+    Socket.on(socket, UpdateCard, update(UpdateCard));
+    Socket.on(socket, ToggleRevealed, update(ToggleRevealed));
   },
 );
 

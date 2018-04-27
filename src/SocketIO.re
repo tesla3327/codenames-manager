@@ -189,6 +189,10 @@ module Server = {
       external _on :
         (socketT, [@bs.ignore] M.t('a), string, 'a => unit) => unit =
         "on";
+      /* let on = (type a, socket, t: M.t(a), func: M.t(a) => unit) =>
+         _on(socket, t, M.stringify(t), obj =>
+           func(Json.fromValidJson(obj))
+         ); */
       let on = (socket, t, func) =>
         _on(socket, t, M.stringify(t), obj =>
           func(Json.fromValidJson(obj))

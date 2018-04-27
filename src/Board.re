@@ -23,7 +23,7 @@ type t = array(array(card));
 let updateCards = (func, board) =>
   Belt.(Array.map(board, row => Array.map(row, func)));
 
-let toggleRevealed = (board, id) =>
+let toggleRevealed = (board: t, id) =>
   updateCards(
     card =>
       if (card.id === id) {

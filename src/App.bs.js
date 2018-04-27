@@ -11,7 +11,7 @@ var CodenamesSocket$ReactTemplate = require("./CodenamesSocket.bs.js");
 
 ((window.io = require("socket.io-client")));
 
-var SocketClient = SocketIO$ReactTemplate.Client[/* Make */0](CodenamesSocket$ReactTemplate.Common);
+var SocketClient = SocketIO$ReactTemplate.Client[/* Make */0](/* CodenamesSocket-ReactTemplate */[CodenamesSocket$ReactTemplate.stringify]);
 
 var component = ReasonReact.reducerComponent("App");
 

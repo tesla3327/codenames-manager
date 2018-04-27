@@ -14,7 +14,5 @@ function stringify(t) {
   }
 }
 
-var Common = /* module */[/* stringify */stringify];
-
-exports.Common = Common;
+exports.stringify = stringify;
 /* No side effect */

@@ -2,7 +2,7 @@
 [%bs.raw "window.io = require(\"socket.io-client\")"];
 
 /* Socket test */
-module SocketClient = SocketIO.Client.Make(CodenamesSocket.Common);
+module SocketClient = SocketIO.Client.Make(CodenamesSocket);
 
 type state = {
   board: Board.t,
@@ -33,7 +33,7 @@ let make = (~words, _children) => {
   },
   didMount: self => {
     let socket = SocketClient.create();
-    SocketClient.on(socket, CodenamesSocket.Common.UpdateBoard, obj =>
+    SocketClient.on(socket, CodenamesSocket.UpdateBoard, obj =>
       self.send(UpdateBoard(obj))
     );
     self.state.socket := Some(socket);
@@ -63,7 +63,7 @@ let make = (~words, _children) => {
         id => {
           trySendAction(
             self.state.socket^,
-            CodenamesSocket.Common.ToggleRevealed,
+            CodenamesSocket.ToggleRevealed,
             id,
           );
           self.send(ToggleRevealed(id));
@@ -72,11 +72,7 @@ let make = (~words, _children) => {
       editCard=(id => self.send(EditCard(id)))
       updateCard=(
         card => {
-          trySendAction(
-            self.state.socket^,
-            CodenamesSocket.Common.UpdateCard,
-            card,
-          );
+          trySendAction(self.state.socket^, CodenamesSocket.UpdateCard, card);
           self.send(UpdateCard(card));
         }
       )

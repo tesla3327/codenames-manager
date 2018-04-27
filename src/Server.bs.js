@@ -28,7 +28,7 @@ var publicDir = dirname !== undefined ? dirname + "/../build" : "./build";
 
 Curry._2(Express.App[/* use */0], app, Express.Static[/* asMiddleware */4](Express.Static[/* make */3](publicDir, Express.Static[/* defaultOptions */0](/* () */0))));
 
-var SocketServer = SocketIO$ReactTemplate.Server[/* Make */0](CodenamesSocket$ReactTemplate.Common);
+var SocketServer = SocketIO$ReactTemplate.Server[/* Make */0](/* CodenamesSocket-ReactTemplate */[CodenamesSocket$ReactTemplate.stringify]);
 
 var io = SocketIo(http);
 
@@ -66,17 +66,31 @@ function make(board_) {
 
 var State = /* module */[/* make */make];
 
-var state = /* record */[/* board */Board$ReactTemplate.make_with_words(words)];
+var state = [/* record */[/* board */Board$ReactTemplate.make_with_words(words)]];
+
+function reduce(state, action, data) {
+  switch (action) {
+    case 0 : 
+        return /* record */[/* board */Board$ReactTemplate.updateCard(state[/* board */0], data)];
+    case 1 : 
+        return /* record */[/* board */Board$ReactTemplate.toggleRevealed(state[/* board */0], data)];
+    case 2 : 
+        return state;
+    
+  }
+}
 
 Curry._2(SocketServer[/* onConnect */2], io, (function (socket) {
-        Curry._3(SocketServer[/* Socket */1][/* emit */1], socket, /* UpdateBoard */2, state[/* board */0]);
-        Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* UpdateCard */0, (function (data) {
-                console.log("Updating card: " + data);
-                return Curry._3(SocketServer[/* Socket */1][/* broadcast */2], socket, /* UpdateCard */0, data);
+        Curry._3(SocketServer[/* Socket */1][/* emit */1], socket, /* UpdateBoard */2, state[0][/* board */0]);
+        var update = function (action, data) {
+          state[0] = reduce(state[0], action, data);
+          return Curry._3(SocketServer[/* emit */0], io, /* UpdateBoard */2, state[0][/* board */0]);
+        };
+        Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* UpdateCard */0, (function (param) {
+                return update(/* UpdateCard */0, param);
               }));
-        return Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* ToggleRevealed */1, (function (id) {
-                      console.log("Toggled: " + id);
-                      return Curry._3(SocketServer[/* Socket */1][/* broadcast */2], socket, /* ToggleRevealed */1, id);
+        return Curry._3(SocketServer[/* Socket */1][/* on */0], socket, /* ToggleRevealed */1, (function (param) {
+                      return update(/* ToggleRevealed */1, param);
                     }));
       }));
 
@@ -102,5 +116,6 @@ exports.io = io;
 exports.words = words;
 exports.State = State;
 exports.state = state;
+exports.reduce = reduce;
 exports.onListen = onListen;
 /* app Not a pure module */
