@@ -2,15 +2,15 @@ open Express;
 
 open CodenamesSocket;
 
-open Belt;
-
 module Http = {
   type http;
   [@bs.module "http"] external make : App.t => http = "Server";
-  [@bs.send] external listen : (http, int, unit => unit) => unit = "";
+  [@bs.send] external listen : (http, int, string, unit => unit) => unit = "";
 };
 
 let port = 3333;
+
+let host = "0.0.0.0";
 
 let app = express();
 
@@ -94,6 +94,6 @@ SocketServer.onConnect(
 );
 
 let onListen = () =>
-  Js.log @@ "Listening at http://localhost:" ++ string_of_int(3333);
+  Js.log @@ "Listening at " ++ host ++ ":" ++ string_of_int(3333);
 
-Http.listen(http, port, onListen);
+Http.listen(http, port, host, onListen);
